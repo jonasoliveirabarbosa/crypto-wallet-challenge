@@ -4,11 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +32,7 @@ public class App {
    * then execute all the logic to return the required info.
    */
   public static void main(String[] args) {
-    String path = "input.csv";
+    String path = "";
 
     if (args.length > 0) {
       path = args[0];
@@ -82,8 +86,15 @@ public class App {
    */
   public static List<Coin> readFile(String path) {
     String filePath = path;
+    InputStreamReader streamReader;
+    try {
+      streamReader = new FileReader(filePath);
+    } catch (FileNotFoundException e) {
+      InputStream inputStream = App.class.getClassLoader().getResourceAsStream("input.csv");
+      streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+    }
 
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+    try (BufferedReader reader = new BufferedReader(streamReader)) {
       String line;
       reader.readLine();
       List<Coin> coins = new ArrayList<Coin>();
